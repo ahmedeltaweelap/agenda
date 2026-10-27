@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أجندة القضايا السحابية - النيابة الإدارية</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #b45309;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --investigating: #3b82f6;
+            --istifaa: #ea580c;
+            --ekhtesas: #0284c7;
+            --tech-office: #f59e0b;
+            --saved: #10b981;
+            --lawsuit: #8b5cf6;
+            --rate: #0d9488;
+            --danger: #dc2626;
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Cairo", sans-serif; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0 0 90px 0; }
+
+        /* شاشة تسجيل الدخول السحابية */
+        #authScreen {
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .auth-card {
+            background: white; width: 100%; max-width: 400px; border-radius: 24px;
+            padding: 28px 22px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center;
+        }
+        .auth-card h2 { margin: 0 0 6px; color: var(--primary); font-size: 1.4rem; }
+        .auth-card p { margin: 0 0 20px; color: var(--muted); font-size: 0.85rem; }
+        .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; background: #f1f5f9; padding: 5px; border-radius: 12px; }
+        .auth-tab { padding: 9px; border-radius: 9px; font-weight: 700; font-size: 0.85rem; cursor: pointer; color: var(--muted); border: none; background: transparent; }
+        .auth-tab.active { background: var(--primary); color: white; }
+        .auth-input {
+            width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #cbd5e1;
+            margin-bottom: 12px; font-size: 0.92rem; outline: none; background: #f8fafc;
+        }
+        .auth-btn {
+            width: 100%; padding: 13px; border-radius: 12px; border: none;
+            background: var(--primary); color: white; font-size: 1rem; font-weight: 700;
+            cursor: pointer; margin-top: 6px;
+        }
+        .auth-error { color: #ef4444; font-size: 0.8rem; margin-bottom: 10px; display: none; font-weight: 600; }
+
+        /* واجهة البرنامج الرئيسية */
+        #appScreen { display: none; }
+
+        /* شريط التعميمات والتنبيهات العام */
+        #announcementBanner {
+            display: none; background: linear-gradient(90deg, #b45309, #d97706);
+            color: white; padding: 10px 16px; font-size: 0.85rem; font-weight: 700;
+            text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white; padding: 18px 16px 28px;
+            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        .header-top {
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+        }
+        .header-title { font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        
+        /* زر إدارة الموقع الخفي الأنيق */
+        .btn-admin-stealth {
+            background: rgba(255,255,255,0.07); color: #94a3b8;
+            border: 1px dashed rgba(255,255,255,0.18); padding: 4px 8px;
+            border-radius: 8px; font-size: 0.68rem; font-weight: 700;
+            cursor: pointer; transition: 0.25s;
+        }
+        .btn-admin-stealth:hover { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border-color: #fbbf24; }
+
+        .top-actions { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+        .btn-top {
+            background: rgba(255,255,255,0.15); color: white; border: none;
+            padding: 6px 10px; border-radius: 8px; font-size: 0.73rem; font-weight: 700; cursor: pointer;
+        }
+        .btn-print { background: #0d9488; }
+        .btn-logout { background: #ef4444; }
+
+        .member-box {
+            margin-top: 12px; width: 100%; padding: 9px 12px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1);
+            color: #fbbf24; font-size: 0.9rem; font-weight: 700; outline: none;
+        }
+        .member-box::placeholder { color: #cbd5e1; font-weight: 400; }
+
+        .cloud-status {
+            font-size: 0.72rem; color: #34d399; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;
+        }
+
+        /* لوحة الإحصائيات - 8 خانات */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px;
+            padding: 0 12px; margin-top: -18px;
+        }
+        .stat-card {
+            background: var(--card); padding: 9px 4px; border-radius: 13px;
+            text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            border-bottom: 3px solid transparent;
+        }
+        .stat-card h3 { margin: 0; font-size: 1.15rem; font-weight: 800; }
+        .stat-card span { font-size: 0.68rem; color: var(--muted); font-weight: 700; display: block; margin-top: 2px; }
+
+        /* البحث والفلاتر */
+        .controls { padding: 14px 14px 6px; }
+        .search-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 10px; }
+        .search-box {
+            width: 100%; padding: 11px 14px; border-radius: 12px;
+            border: 1px solid #e2e8f0; background: white; font-size: 0.9rem;
+            outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .year-select {
+            padding: 0 12px; border-radius: 12px; border: 1px solid #e2e8f0;
+            background: white; font-weight: 700; font-size: 0.82rem; color: var(--primary); outline: none;
+        }
+        .filters { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+        .filter-btn {
+            padding: 7px 13px; border-radius: 20px; border: 1px solid #e2e8f0;
+            background: white; color: var(--muted); font-size: 0.8rem; font-weight: 700;
+            white-space: nowrap; cursor: pointer; transition: 0.2s;
+        }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .filter-btn.special-alert { border-color: #fecaca; color: #b91c1c; background: #fef2f2; }
+        .filter-btn.special-alert.active { background: #dc2626; color: white; border-color: #dc2626; }
+        .filter-btn.special-session { border-color: #bae6fd; color: #0369a1; background: #f0f9ff; }
+        .filter-btn.special-session.active { background: #0284c7; color: white; border-color: #0284c7; }
+
+        /* كروت القضايا */
+        .cases-list { padding: 8px 14px; display: flex; flex-direction: column; gap: 12px; }
+        .case-card {
+            background: var(--card); border-radius: 16px; padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04); position: relative;
+            border-right: 5px solid var(--investigating);
+        }
+        .case-card[data-status="استيفاء"] { border-right-color: var(--istifaa); }
+        .case-card[data-status="اختصاص"] { border-right-color: var(--ekhtesas); }
+        .case-card[data-status="مكتب فني"] { border-right-color: var(--tech-office); }
+        .case-card[data-status="حفظ"] { border-right-color: var(--saved); }
+        .case-card[data-status="دعوى تأديبية"] { border-right-color: var(--lawsuit); }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+        .case-num { font-size: 1.08rem; font-weight: 800; color: var(--primary); }
+        .badges-wrap { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+        .badge {
+            padding: 4px 10px; border-radius: 20px; font-size: 0.73rem; font-weight: 700;
+            background: #eff6ff; color: var(--investigating);
+        }
+        .badge[data-status="استيفاء"] { background: #ffedd5; color: #c2410c; }
+        .badge[data-status="اختصاص"] { background: #e0f2fe; color: #0369a1; }
+        .badge[data-status="مكتب فني"] { background: #fef3c7; color: #b45309; }
+        .badge[data-status="حفظ"] { background: #d1fae5; color: #047857; }
+        .badge[data-status="دعوى تأديبية"] { background: #ede9fe; color: #6d28d9; }
+
+        .overdue-tag {
+            background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;
+            padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 800;
+        }
+        .session-tag {
+            background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;
+            padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 800;
+        }
+
+        .source-tag {
+            display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.74rem;
+            font-weight: 700; background: #e2e8f0; color: #1e293b; margin-left: 4px;
+        }
+
+        .case-subject { font-weight: 700; font-size: 0.95rem; margin-bottom: 10px; color: #1e293b; }
+        .case-details { font-size: 0.82rem; color: var(--muted); display: grid; gap: 5px; background: #f8fafc; padding: 10px; border-radius: 10px; }
+        .case-details div strong { color: #334155; }
+        .card-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; }
+        .btn-small { border: none; background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; color: #334155; font-weight: 600; }
+        .btn-delete { color: #ef4444; background: #fef2f2; }
+
+        /* توقيع المبرمج بالأسفل */
+        .app-footer {
+            text-align: center; padding: 22px 14px 10px; margin-top: 20px;
+            border-top: 1px dashed #cbd5e1;
+        }
+        .dev-badge {
+            display: inline-block; background: var(--primary); color: white;
+            padding: 9px 18px; border-radius: 22px; font-size: 0.8rem; font-weight: 700;
+        }
+        .dev-badge a { color: #fbbf24; text-decoration: underline; }
+
+        /* زر الإضافة العائم */
+        .fab {
+            position: fixed; bottom: 20px; left: 20px;
+            background: var(--primary); color: white; border: none;
+            padding: 14px 22px; border-radius: 30px; font-size: 0.95rem; font-weight: 700;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.3); cursor: pointer;
+            display: flex; align-items: center; gap: 8px; z-index: 10;
+        }
+
+        /* النوافذ المنبثقة (Modals) */
+        .modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+            z-index: 100; align-items: flex-end; justify-content: center;
+        }
+        .modal.open { display: flex; }
+        .modal-content {
+            background: white; width: 100%; max-width: 550px;
+            border-top-left-radius: 24px; border-top-right-radius: 24px;
+            padding: 20px; max-height: 92vh; overflow-y: auto;
+        }
+        .form-group { margin-bottom: 11px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; color: #334155; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.88rem;
+        }
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .source-selector {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;
+        }
+        .source-option {
+            padding: 9px; border-radius: 10px; border: 2px solid #e2e8f0;
+            background: #f8fafc; color: #475569; font-weight: 700; font-size: 0.85rem;
+            text-align: center; cursor: pointer; transition: 0.2s;
+        }
+        .source-option.active {
+            border-color: var(--primary); background: #eff6ff; color: var(--primary);
+        }
+
+        .btn-save { width: 100%; background: var(--primary); color: white; border: none; padding: 13px; border-radius: 12px; font-size: 0.95rem; font-weight: 700; margin-top: 6px; cursor: pointer; }
+
+        /* تنسيق لوحة تحكم المشرف (Admin Panel) */
+        .admin-section {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px;
+            padding: 14px; margin-bottom: 14px;
+        }
+        .admin-section h4 { margin: 0 0 10px; color: var(--primary); font-size: 0.95rem; display: flex; align-items: center; gap: 6px; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 8px; background: white; }
+        .admin-table th, .admin-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: center; }
+        .admin-table th { background: #1e293b; color: white; }
+        .chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .chip { background: #e2e8f0; padding: 4px 10px; border-radius: 15px; font-size: 0.76rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .chip span { color: #dc2626; cursor: pointer; font-weight: 900; }
+
+        /* قسم الطباعة الرسمي (PDF / A4) */
+        #printReportArea { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #authScreen, #appScreen, .modal, .fab { display: none !important; }
+            #printReportArea, #printReportArea * { visibility: visible; }
+            #printReportArea {
+                display: block !important; position: absolute; left: 0; top: 0; width: 100%;
+                padding: 15px; background: white; color: black;
+            }
+            .print-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+            .print-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+            .print-table th, .print-table td { border: 1px solid #000; padding: 6px; text-align: right; }
+            .print-table th { background: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 1. شاشة تسجيل الدخول السحابية -->
+<div id="authScreen">
+    <div class="auth-card">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">⚖️</div>
+        <h2>أجندة القضايا السحابية</h2>
+        <p>النيابة الإدارية — حفظ آمن ومزامنة فورية للقضايا</p>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل دخول</button>
+            <button class="auth-tab" id="tabRegister" onclick="switchAuthMode('register')">حساب جديد لزميل</button>
+        </div>
+
+        <div id="authError" class="auth-error"></div>
+
+        <input type="text" id="authUsername" class="auth-input" placeholder="👤 اسم المستخدم أو رقم الهاتف (بدون مسافات)">
+        <input type="text" id="authFullName" class="auth-input" placeholder="⚖️ الاسم الكامل للعضو (يظهر في الأجندة)" style="display:none;">
+        <input type="password" id="authPassword" class="auth-input" placeholder="🔒 كلمة المرور (6 أحرف أو أرقام على الأقل)">
+
+        <button class="auth-btn" id="authSubmitBtn" onclick="handleAuth()">دخول إلى الأجندة</button>
+
+        <div style="margin-top: 22px; font-size: 0.78rem; color: #64748b;">
+            تصميم وبرمجة: <a href="tel:01014189003" style="color: #b45309; font-weight: 700;">أحمد الطويل</a> — نيابة ملوي الإدارية
+        </div>
+    </div>
+</div>
+
+<!-- 2. شاشة التطبيق الرئيسية -->
+<div id="appScreen">
+    <!-- شريط التنبيهات العام من المشرف -->
+    <div id="announcementBanner"></div>
+
+    <header>
+        <div class="header-top">
+            <div class="header-title">
+                <span>⚖️ أجندة القضايا</span>
+                <button class="btn-admin-stealth" onclick="openAdminPanel()" title="لوحة تحكم المشرف">⚙️ إدارة الموقع</button>
+            </div>
+            <div class="top-actions">
+                <button class="btn-top btn-print" onclick="printOfficialReport()">🖨️ كشف رسمي PDF</button>
+                <button class="btn-top" onclick="exportCSV()">📥 Excel</button>
+                <button class="btn-top btn-logout" onclick="logoutUser()">خروج</button>
+            </div>
+        </div>
+        <input type="text" id="memberInput" class="member-box" placeholder="👤 اسم المستشار / العضو المحال إليه..." onchange="updateMemberNameCloud()">
+        <div class="cloud-status">
+            <span id="cloudIndicator">☁️ متصل بالسحابة — يتم حفظ القضايا تلقائياً</span>
+            <span id="overdueCounter" style="color:#fca5a5; font-weight:700;"></span>
+        </div>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card" style="border-color: var(--primary)"><h3 id="stat-total">0</h3><span>الإجمالي</span></div>
+        <div class="stat-card" style="border-color: var(--investigating)"><h3 id="stat-inv">0</h3><span>قيد التحقيق</span></div>
+        <div class="stat-card" style="border-color: var(--istifaa)"><h3 id="stat-istifaa">0</h3><span>استيفاء</span></div>
+        <div class="stat-card" style="border-color: var(--ekhtesas)"><h3 id="stat-ekhtesas">0</h3><span>اختصاص</span></div>
+        <div class="stat-card" style="border-color: var(--tech-office)"><h3 id="stat-tech">0</h3><span>مكتب فني</span></div>
+        <div class="stat-card" style="border-color: var(--saved)"><h3 id="stat-saved">0</h3><span>حفظ</span></div>
+        <div class="stat-card" style="border-color: var(--lawsuit)"><h3 id="stat-lawsuit">0</h3><span>دعوى</span></div>
+        <div class="stat-card" style="border-color: var(--rate)"><h3 id="stat-rate" style="color: var(--rate)">0%</h3><span>نسبة الإنجاز</span></div>
+    </div>
+
+    <div class="controls">
+        <div class="search-row">
+            <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث برقم القضية، الموضوع، الشاكي أو الجهة..." oninput="renderCases()">
+            <select id="yearFilter" class="year-select" onchange="renderCases()">
+                <option value="الكل">كل السنوات</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+            </select>
+        </div>
+        <div class="filters">
+            <button class="filter-btn active" onclick="setFilter('الكل', this)">الكل</button>
+            <button class="filter-btn special-session" onclick="setFilter('جلسات قريبة', this)">🔔 جلسات اليوم/الغد</button>
+            <button class="filter-btn special-alert" onclick="setFilter('متأخرة', this)">⚠️ متأخرة (+3 أشهر)</button>
+            <button class="filter-btn" onclick="setFilter('قيد التحقيق', this)">⏳ قيد التحقيق</button>
+            <button class="filter-btn" onclick="setFilter('استيفاء', this)">📋 استيفاء</button>
+            <button class="filter-btn" onclick="setFilter('اختصاص', this)">🏛️ اختصاص</button>
+            <button class="filter-btn" onclick="setFilter('مكتب فني', this)">📁 مكتب فني</button>
+            <button class="filter-btn" onclick="setFilter('حفظ', this)">✅ حفظ</button>
+            <button class="filter-btn" onclick="setFilter('دعوى تأديبية', this)">⚖️ دعوى تأديبية</button>
+        </div>
+    </div>
+
+    <div class="cases-list" id="casesList"></div>
+
+    <footer class="app-footer">
+        <div class="dev-badge">
+            تصميم وبرمجة: <a href="tel:01014189003">أحمد الطويل</a> - نيابة ملوي الإدارية
+        </div>
+    </footer>
+
+    <button class="fab" onclick="openModal()">+ إضافة قضية</button>
+</div>
+
+<!-- 3. النافذة المنبثقة لإضافة وتعديل القضايا -->
+<div class="modal" id="caseModal">
+    <div class="modal-content">
+        <h3 style="margin-top:0" id="modalTitle">إضافة قضية جديدة</h3>
+        <input type="hidden" id="editIndex">
+        <input type="hidden" id="sourceType" value="شكوى">
+
+        <div class="form-row-2">
+            <div class="form-group">
+                <label>رقم القضية والسنة *</label>
+                <input type="text" id="caseNum" placeholder="مثال: 412 لسنة 2026">
+            </div>
+            <div class="form-group">
+                <label>تاريخ الإحالة / الورود</label>
+                <input type="date" id="refDate">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>مصدر القضية (شكوى أو بلاغ)</label>
+            <div class="source-selector">
+                <div class="source-option active" id="optComplaint" onclick="selectSourceType('شكوى')">👤 شكوى</div>
+                <div class="source-option" id="optReport" onclick="selectSourceType('بلاغ')">🏢 بلاغ جهة</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="complainantLabel">اسم الشاكي</label>
+            <input type="text" id="complainant" list="QuickEntitiesList" placeholder="اكتب الاسم أو اختر من القائمة...">
+            <datalist id="QuickEntitiesList"></datalist>
+        </div>
+
+        <div class="form-group">
+            <label>موضوع القضية باختصار *</label>
+            <input type="text" id="subject" placeholder="مثال: مخالفات مالية بالإدارة التعليمية">
+        </div>
+
+        <div class="form-row-2">
+            <div class="form-group">
+                <label>آخر ما تم في القضية</label>
+                <input type="text" id="lastAction" placeholder="مثال: سؤال الشاكي وطلب تحريات">
+            </div>
+            <div class="form-group">
+                <label>📅 تاريخ الجلسة القادمة (اختياري)</label>
+                <input type="date" id="sessionDate">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>الموقف / التصرف النهائي</label>
+            <select id="status">
+                <option value="قيد التحقيق">قيد التحقيق</option>
+                <option value="استيفاء">استيفاء</option>
+                <option value="اختصاص">اختصاص</option>
+                <option value="مكتب فني">مكتب فني</option>
+                <option value="حفظ">حفظ</option>
+                <option value="دعوى تأديبية">دعوى تأديبية</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>ملاحظات إضافية (أرقام صادر / قرارات)</label>
+            <textarea id="notes" rows="2" placeholder="أي تفاصيل إضافية..."></textarea>
+        </div>
+        <button class="btn-save" onclick="saveCase()">حفظ القضية على السحابة ☁️</button>
+        <button onclick="closeModal()" style="width:100%; background:none; border:none; padding:10px; color:#64748b; margin-top:4px; cursor:pointer;">إلغاء</button>
+    </div>
+</div>
+
+<!-- 4. لوحة تحكم المشرف (Admin Panel Modal) -->
+<div class="modal" id="adminModal">
+    <div class="modal-content" style="max-width: 650px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="margin:0; color:var(--primary);">⚙️ لوحة إدارة الموقع والتطويرات</h3>
+            <button onclick="closeAdminModal()" style="border:none; background:#fee2e2; color:#b91c1c; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer;">إغلاق ✖</button>
+        </div>
+
+        <!-- 1. التعميمات والتنبيهات الفورية -->
+        <div class="admin-section">
+            <h4>📢 شريط التنبيهات العام لجميع الأعضاء</h4>
+            <input type="text" id="adminAnnouncementInput" placeholder="اكتب تنبيهاً أو تذكيراً يظهر أعلى الموقع لكل الزملاء..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:8px;">
+            <div style="display:flex; gap:8px;">
+                <button onclick="saveGlobalSettings()" style="background:var(--primary); color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem;">نشر التنبيه فوراً</button>
+                <button onclick="clearAnnouncement()" style="background:#e2e8f0; color:#334155; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem;">إخفاء الشريط</button>
+            </div>
+        </div>
+
+        <!-- 2. إدارة الجهات المبلغة المتكررة -->
+        <div class="admin-section">
+            <h4>🏢 الجهات المبلغة السريعة (تظهر تلقائياً عند اختيار بلاغ)</h4>
+            <div style="display:flex; gap:6px;">
+                <input type="text" id="newEntityInput" placeholder="أضف جهة جديدة (مثال: مستشفى ملوي العام)..." style="flex:1; padding:8px; border-radius:8px; border:1px solid #cbd5e1;">
+                <button onclick="addQuickEntity()" style="background:#0284c7; color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer;">+ إضافة</button>
+            </div>
+            <div class="chip-list" id="entitiesChipList"></div>
+        </div>
+
+        <!-- 3. إحصائية النيابة المجمعة لجميع الأعضاء -->
+        <div class="admin-section">
+            <h4>📊 إحصائية المكتب المجمعة (أعضاء النيابة المسجلين)</h4>
+            <button onclick="loadAllMembersStats()" style="background:#0d9488; color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; width:100%;">🔄 جلب وتحديث إحصائيات جميع الأعضاء من السحابة</button>
+            <div id="allMembersStatsContainer" style="overflow-x:auto; margin-top:8px;"></div>
+        </div>
+
+        <!-- 4. النسخ الاحتياطي الشامل لحماية قاعدة البيانات -->
+        <div class="admin-section">
+            <h4>💾 حماية قاعدة البيانات (Master Backup & Restore)</h4>
+            <p style="font-size:0.75rem; color:#64748b; margin:0 0 10px;">يمكنك تحميل نسخة احتياطية كاملة بامتداد (JSON) صالحة للنقل لأي خادم رسمي أو استضافة مدفوعة في المستقبل.</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button onclick="downloadMasterBackup()" style="background:#b45309; color:white; border:none; padding:9px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; flex:1;">📥 تحميل قاعدة البيانات كاملة (JSON)</button>
+                <button onclick="document.getElementById('restoreFileInput').click()" style="background:#475569; color:white; border:none; padding:9px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; flex:1;">📤 استرجاع قضايا من ملف</button>
+                <input type="file" id="restoreFileInput" accept=".json" style="display:none;" onchange="restoreFromJson(event)">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 5. قالب الكشف الرسمي للطباعة A4 -->
+<div id="printReportArea"></div>
+
+<!-- مكتبات جوجل فايربيز السحابية -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5jDcdTXA7BepTpUfrnPxwpQ6z0FGKVQE",
+        authDomain: "agenda-mallawy.firebaseapp.com",
+        projectId: "agenda-mallawy",
+        storageBucket: "agenda-mallawy.firebasestorage.app",
+        messagingSenderId: "22675479343",
+        appId: "1:22675479343:web:57116245de9bf25fbc9fda",
+        measurementId: "G-2W27SDEER7"
+    };
+
+    let cloudEnabled = false;
+    let auth, db, currentUser = null;
+
+    if (firebaseConfig.apiKey) {
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        cloudEnabled = true;
+    }
+
+    let authMode = 'login';
+    let currentFilter = 'الكل';
+    let cases = [];
+    let quickEntities = [
+        "الإدارة التعليمية بملوي",
+        "الوحدة المحلية لمركز ومدينة ملوي",
+        "الإدارة الصحية بملوي",
+        "مستشفى ملوي التخصصي",
+        "إدارة التضامن الاجتماعي",
+        "الإدارة الزراعية بملوي"
+    ];
+    let globalAnnouncement = "";
+
+    function switchAuthMode(mode) {
+        authMode = mode;
+        document.getElementById('authError').style.display = 'none';
+        if (mode === 'register') {
+            document.getElementById('tabRegister').classList.add('active');
+            document.getElementById('tabLogin').classList.remove('active');
+            document.getElementById('authFullName').style.display = 'block';
+            document.getElementById('authSubmitBtn').innerText = 'إنشاء حساب جديد والدخول';
+        } else {
+            document.getElementById('tabLogin').classList.add('active');
+            document.getElementById('tabRegister').classList.remove('active');
+            document.getElementById('authFullName').style.display = 'none';
+            document.getElementById('authSubmitBtn').innerText = 'دخول إلى الأجندة';
+        }
+    }
+
+    function formatUsernameToEmail(username) {
+        const clean = username.trim().toLowerCase().replace(/\s+/g, '');
+        return clean.includes('@') ? clean : clean + '@niyaba-app.local';
+    }
+
+    async function handleAuth() {
+        const username = document.getElementById('authUsername').value.trim();
+        const password = document.getElementById('authPassword').value.trim();
+        const fullName = document.getElementById('authFullName').value.trim();
+        const errBox = document.getElementById('authError');
+        errBox.style.display = 'none';
+
+        if (!username || password.length < 6) {
+            errBox.innerText = 'يرجى إدخال اسم المستخدم وكلمة مرور من 6 أحرف/أرقام على الأقل';
+            errBox.style.display = 'block';
+            return;
+        }
+
+        const email = formatUsernameToEmail(username);
+        try {
+            if (authMode === 'register') {
+                const cred = await auth.createUserWithEmailAndPassword(email, password);
+                await db.collection('users').doc(cred.user.uid).set({
+                    memberName: fullName || username,
+                    cases: []
+                });
+            } else {
+                await auth.signInWithEmailAndPassword(email, password);
+            }
+        } catch (err) {
+            errBox.innerText = 'بيانات الدخول غير صحيحة أو اسم المستخدم مسجل مسبقاً';
+            errBox.style.display = 'block';
+        }
+    }
+
+    if (cloudEnabled) {
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('appScreen').style.display = 'block';
+
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    cases = Array.isArray(data.cases) ? data.cases : [];
+                    document.getElementById('memberInput').value = data.memberName || '';
+                } else {
+                    cases = [];
+                }
+
+                await fetchGlobalSettings();
+                renderCases();
+            } else {
+                currentUser = null;
+                cases = [];
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('appScreen').style.display = 'none';
+            }
+        });
+    }
+
+    // جلب إعدادات لوحة التحكم العامة (التنبيهات والجهات)
+    async function fetchGlobalSettings() {
+        if (!cloudEnabled) return;
+        try {
+            const sDoc = await db.collection('settings').doc('global').get();
+            if (sDoc.exists) {
+                const sData = sDoc.data();
+                if (Array.isArray(sData.quickEntities) && sData.quickEntities.length > 0) {
+                    quickEntities = sData.quickEntities;
+                }
+                globalAnnouncement = sData.announcement || "";
+            }
+        } catch(e) {}
+        applyGlobalSettingsUI();
+    }
+
+    function applyGlobalSettingsUI() {
+        const banner = document.getElementById('announcementBanner');
+        if (globalAnnouncement && globalAnnouncement.trim() !== "") {
+            banner.innerText = "📢 تنبيه إداري: " + globalAnnouncement;
+            banner.style.display = 'block';
+        } else {
+            banner.style.display = 'none';
+        }
+
+        const datalist = document.getElementById('QuickEntitiesList');
+        datalist.innerHTML = '';
+        quickEntities.forEach(ent => {
+            datalist.innerHTML += `<option value="${ent}">`;
+        });
+
+        const chipList = document.getElementById('entitiesChipList');
+        if (chipList) {
+            chipList.innerHTML = '';
+            quickEntities.forEach((ent, index) => {
+                chipList.innerHTML += `<div class="chip">${ent} <span onclick="removeQuickEntity(${index})">×</span></div>`;
+            });
+        }
+    }
+
+    async function syncToCloud() {
+        if (cloudEnabled && currentUser) {
+            document.getElementById('cloudIndicator').innerText = '⏳ جاري الحفظ على السحابة...';
+            await db.collection('users').doc(currentUser.uid).set({
+                memberName: document.getElementById('memberInput').value,
+                cases: cases,
+                updatedAt: new Date().toISOString()
+            }, { merge: true });
+            document.getElementById('cloudIndicator').innerText = '☁️ تم الحفظ في السحابة بنجاح';
+        }
+    }
+
+    function updateMemberNameCloud() { syncToCloud(); }
+    function logoutUser() { if (cloudEnabled) auth.signOut(); else location.reload(); }
+
+    function selectSourceType(type) {
+        document.getElementById('sourceType').value = type;
+        const optComplaint = document.getElementById('optComplaint');
+        const optReport = document.getElementById('optReport');
+        const label = document.getElementById('complainantLabel');
+        const input = document.getElementById('complainant');
+
+        if (type === 'بلاغ') {
+            optReport.classList.add('active');
+            optComplaint.classList.remove('active');
+            label.innerText = 'اسم الجهة المبلغة (اختر من القائمة أو اكتب)';
+            input.placeholder = 'اختر الجهة المبلغة أو اكتبها...';
+        } else {
+            optComplaint.classList.add('active');
+            optReport.classList.remove('active');
+            label.innerText = 'اسم الشاكي';
+            input.placeholder = 'اكتب اسم الشاكي...';
+        }
+    }
+
+    // فحص ما إذا كانت القضية متأخرة (+90 يوماً وهي قيد التحقيق أو استيفاء)
+    function isCaseOverdue(c) {
+        if (c.status !== 'قيد التحقيق' && c.status !== 'استيفاء') return false;
+        if (!c.refDate || c.refDate === 'لا يوجد') return false;
+        const ref = new Date(c.refDate);
+        if (isNaN(ref.getTime())) return false;
+        const diffDays = (new Date() - ref) / (1000 * 60 * 60 * 24);
+        return diffDays >= 90;
+    }
+
+    // فحص الجلسات القريبة (اليوم أو غداً أو خلال 3 أيام)
+    function isUpcomingSession(c) {
+        if (!c.sessionDate || c.sessionDate === 'لا يوجد') return false;
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const sDate = new Date(c.sessionDate);
+        sDate.setHours(0,0,0,0);
+        const diffDays = (sDate - today) / (1000 * 60 * 60 * 24);
+        return diffDays >= 0 && diffDays <= 2;
+    }
+
+    function renderCases() {
+        const list = document.getElementById('casesList');
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const selectedYear = document.getElementById('yearFilter').value;
+        list.innerHTML = '';
+
+        let inv = 0, istifaa = 0, ekhtesas = 0, tech = 0, saved = 0, lawsuit = 0, overdueCount = 0;
+
+        cases.forEach(c => {
+            if (c.status === 'قيد التحقيق') inv++;
+            else if (c.status === 'استيفاء') istifaa++;
+            else if (c.status === 'اختصاص') ekhtesas++;
+            else if (c.status === 'مكتب فني') tech++;
+            else if (c.status === 'حفظ') saved++;
+            else if (c.status === 'دعوى تأديبية') lawsuit++;
+            if (isCaseOverdue(c)) overdueCount++;
+        });
+
+        const done = ekhtesas + tech + saved + lawsuit;
+        const rate = cases.length > 0 ? Math.round((done / cases.length) * 100) : 0;
+
+        document.getElementById('stat-total').innerText = cases.length;
+        document.getElementById('stat-inv').innerText = inv;
+        document.getElementById('stat-istifaa').innerText = istifaa;
+        document.getElementById('stat-ekhtesas').innerText = ekhtesas;
+        document.getElementById('stat-tech').innerText = tech;
+        document.getElementById('stat-saved').innerText = saved;
+        document.getElementById('stat-lawsuit').innerText = lawsuit;
+        document.getElementById('stat-rate').innerText = rate + '%';
+        document.getElementById('overdueCounter').innerText = overdueCount > 0 ? `⚠️ لديك (${overdueCount}) قضية متأخرة > 3 أشهر` : '';
+
+        if (cases.length === 0) {
+            list.innerHTML = `<div style="text-align:center; padding: 35px 15px; color:#64748b; font-weight:600;">لا توجد قضايا مسجلة حالياً.. اضغط على زر (+ إضافة قضية) بالأسفل لإضافة أول قضية.</div>`;
+            return;
+        }
+
+        cases.forEach((c, idx) => {
+            const overdue = isCaseOverdue(c);
+            const hasSession = isUpcomingSession(c);
+
+            if (currentFilter === 'متأخرة' && !overdue) return;
+            else if (currentFilter === 'جلسات قريبة' && (!c.sessionDate || c.sessionDate === 'لا يوجد')) return;
+            else if (currentFilter !== 'الكل' && currentFilter !== 'متأخرة' && currentFilter !== 'جلسات قريبة' && c.status !== currentFilter) return;
+
+            if (selectedYear !== 'الكل' && !(c.caseNum.includes(selectedYear) || (c.refDate && c.refDate.includes(selectedYear)))) return;
+
+            if (query && !(c.caseNum.toLowerCase().includes(query) || c.subject.toLowerCase().includes(query) || (c.complainant && c.complainant.toLowerCase().includes(query)))) return;
+
+            const sType = c.sourceType || 'شكوى';
+            const sLabel = sType === 'بلاغ' ? '🏢 الجهة المبلغة:' : '👤 الشاكي:';
+
+            list.innerHTML += `
+                <div class="case-card" data-status="${c.status}">
+                    <div class="card-header">
+                        <span class="case-num">قضية ${c.caseNum}</span>
+                        <div class="badges-wrap">
+                            ${overdue ? `<span class="overdue-tag">⚠️ تجاوزت 3 أشهر</span>` : ''}
+                            ${c.sessionDate && c.sessionDate !== 'لا يوجد' ? `<span class="session-tag">📅 جلسة: ${c.sessionDate}</span>` : ''}
+                            <span class="badge" data-status="${c.status}">${c.status}</span>
+                        </div>
+                    </div>
+                    <div class="case-subject">${c.subject}</div>
+                    <div class="case-details">
+                        <div><strong>📅 تاريخ الإحالة:</strong> ${c.refDate || 'لا يوجد'}</div>
+                        <div><span class="source-tag">${sType}</span> <strong>${sLabel}</strong> ${c.complainant || 'لا يوجد'}</div>
+                        <div><strong>🔄 آخر إجراء:</strong> ${c.lastAction || 'لا يوجد'}</div>
+                        ${c.notes && c.notes !== 'لا يوجد' ? `<div><strong>📌 ملاحظات:</strong> ${c.notes}</div>` : ''}
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-small" onclick="editCase(${idx})">✏️ تعديل / تحديث</button>
+                        <button class="btn-small btn-delete" onclick="deleteCase(${idx})">حذف</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function setFilter(filter, btn) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderCases();
+    }
+
+    function openModal(idx = null) {
+        document.getElementById('caseModal').classList.add('open');
+        if (idx !== null) {
+            const c = cases[idx];
+            document.getElementById('modalTitle').innerText = 'تحديث بيانات القضية';
+            document.getElementById('editIndex').value = idx;
+            document.getElementById('caseNum').value = c.caseNum;
+            document.getElementById('refDate').value = c.refDate === 'لا يوجد' ? '' : c.refDate;
+            selectSourceType(c.sourceType || 'شكوى');
+            document.getElementById('complainant').value = c.complainant === 'لا يوجد' ? '' : c.complainant;
+            document.getElementById('subject').value = c.subject === 'لا يوجد' ? '' : c.subject;
+            document.getElementById('lastAction').value = c.lastAction === 'لا يوجد' ? '' : c.lastAction;
+            document.getElementById('sessionDate').value = (!c.sessionDate || c.sessionDate === 'لا يوجد') ? '' : c.sessionDate;
+            document.getElementById('status').value = c.status;
+            document.getElementById('notes').value = c.notes === 'لا يوجد' ? '' : c.notes;
+        } else {
+            document.getElementById('modalTitle').innerText = 'إضافة قضية جديدة';
+            document.getElementById('editIndex').value = '';
+            document.querySelectorAll('#caseModal input, #caseModal textarea').forEach(i => i.value = '');
+            selectSourceType('شكوى');
+            document.getElementById('status').value = 'قيد التحقيق';
+        }
+    }
+
+    function closeModal() { document.getElementById('caseModal').classList.remove('open'); }
+
+    async function saveCase() {
+        const caseNum = document.getElementById('caseNum').value.trim();
+        const subject = document.getElementById('subject').value.trim() || 'لا يوجد';
+        if (!caseNum) return alert('يرجى إدخال رقم القضية');
+
+        const data = {
+            caseNum,
+            refDate: document.getElementById('refDate').value || 'لا يوجد',
+            sourceType: document.getElementById('sourceType').value || 'شكوى',
+            complainant: document.getElementById('complainant').value.trim() || 'لا يوجد',
+            subject,
+            lastAction: document.getElementById('lastAction').value.trim() || 'لا يوجد',
+            sessionDate: document.getElementById('sessionDate').value || 'لا يوجد',
+            status: document.getElementById('status').value,
+            notes: document.getElementById('notes').value.trim() || 'لا يوجد'
+        };
+
+        const editIdx = document.getElementById('editIndex').value;
+        if (editIdx !== '') cases[editIdx] = data;
+        else cases.unshift(data);
+
+        closeModal();
+        renderCases();
+        await syncToCloud();
+    }
+
+    function editCase(idx) { openModal(idx); }
+    async function deleteCase(idx) {
+        if (confirm('هل تريد حذف هذه القضية نهائياً؟')) {
+            cases.splice(idx, 1);
+            renderCases();
+            await syncToCloud();
+        }
+    }
+
+    // =========================================================================
+    // وظائف لوحة تحكم المشرف (Admin Panel)
+    // =========================================================================
+    function openAdminPanel() {
+        const pass = prompt("🔒 أدخل الرقم السري لإدارة الموقع (الافتراضي: 123456):");
+        if (pass !== "123456") {
+            if (pass !== null) alert("الرقم السري غير صحيح!");
+            return;
+        }
+        document.getElementById('adminAnnouncementInput').value = globalAnnouncement;
+        applyGlobalSettingsUI();
+        document.getElementById('adminModal').classList.add('open');
+    }
+
+    function closeAdminModal() {
+        document.getElementById('adminModal').classList.remove('open');
+    }
+
+    async function saveGlobalSettings() {
+        globalAnnouncement = document.getElementById('adminAnnouncementInput').value.trim();
+        applyGlobalSettingsUI();
+        if (cloudEnabled) {
+            await db.collection('settings').doc('global').set({
+                announcement: globalAnnouncement,
+                quickEntities: quickEntities
+            }, { merge: true });
+            alert("✅ تم حفظ ونشر التعديلات لجميع الأعضاء بنجاح!");
+        }
+    }
+
+    async function clearAnnouncement() {
+        document.getElementById('adminAnnouncementInput').value = '';
+        await saveGlobalSettings();
+    }
+
+    async function addQuickEntity() {
+        const val = document.getElementById('newEntityInput').value.trim();
+        if (!val) return;
+        if (!quickEntities.includes(val)) {
+            quickEntities.push(val);
+            document.getElementById('newEntityInput').value = '';
+            applyGlobalSettingsUI();
+            if (cloudEnabled) {
+                await db.collection('settings').doc('global').set({ quickEntities }, { merge: true });
+            }
+        }
+    }
+
+    async function removeQuickEntity(idx) {
+        quickEntities.splice(idx, 1);
+        applyGlobalSettingsUI();
+        if (cloudEnabled) {
+            await db.collection('settings').doc('global').set({ quickEntities }, { merge: true });
+        }
+    }
+
+    async function loadAllMembersStats() {
+        const container = document.getElementById('allMembersStatsContainer');
+        container.innerHTML = '⏳ جاري تجميع بيانات الأعضاء من السحابة...';
+        try {
+            const snap = await db.collection('users').get();
+            let html = `<table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>اسم العضو</th>
+                        <th>الإجمالي</th>
+                        <th>تحقيق/استيفاء</th>
+                        <th>منجز (حفظ/دعوى/فني/اختصاص)</th>
+                        <th>نسبة الإنجاز</th>
+                    </tr>
+                </thead><tbody>`;
+
+            let grandTotal = 0, grandDone = 0;
+            snap.forEach(doc => {
+                const d = doc.data();
+                const cList = Array.isArray(d.cases) ? d.cases : [];
+                const total = cList.length;
+                const done = cList.filter(c => ['اختصاص','مكتب فني','حفظ','دعوى تأديبية'].includes(c.status)).length;
+                const pending = total - done;
+                const rate = total > 0 ? Math.round((done / total) * 100) : 0;
+                grandTotal += total;
+                grandDone += done;
+
+                html += `<tr>
+                    <td style="font-weight:700;">${d.memberName || 'عضو مسجل'}</td>
+                    <td>${total}</td>
+                    <td>${pending}</td>
+                    <td>${done}</td>
+                    <td style="font-weight:700; color:#0d9488;">${rate}%</td>
+                </tr>`;
+            });
+
+            const grandRate = grandTotal > 0 ? Math.round((grandDone / grandTotal) * 100) : 0;
+            html += `<tr style="background:#fef3c7; font-weight:800;">
+                <td>إجمالي النيابة</td>
+                <td>${grandTotal}</td>
+                <td>${grandTotal - grandDone}</td>
+                <td>${grandDone}</td>
+                <td>${grandRate}%</td>
+            </tr></tbody></table>`;
+            container.innerHTML = html;
+        } catch(e) {
+            container.innerHTML = '⚠️ تعذر جلب الإحصائيات المجمعة.';
+        }
+    }
+
+    // تحميل نسخة احتياطية شاملة (Master JSON Backup)
+    async function downloadMasterBackup() {
+        try {
+            let backupData = { exportedAt: new Date().toISOString(), currentMemberCases: cases, allUsers: [] };
+            if (cloudEnabled) {
+                const snap = await db.collection('users').get();
+                snap.forEach(doc => {
+                    backupData.allUsers.push({ uid: doc.id, ...doc.data() });
+                });
+            }
+            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `نسخة_احتياطية_شاملة_النيابة_${new Date().toISOString().slice(0,10)}.json`;
+            link.click();
+        } catch (e) {
+            alert("حدث خطأ أثناء تحميل النسخة الاحتياطية");
+        }
+    }
+
+    async function restoreFromJson(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                if (Array.isArray(parsed.currentMemberCases)) {
+                    cases = parsed.currentMemberCases;
+                } else if (Array.isArray(parsed)) {
+                    cases = parsed;
+                }
+                renderCases();
+                await syncToCloud();
+                alert("✅ تم استرجاع القضايا وحفظها في السحابة بنجاح!");
+                closeAdminModal();
+            } catch (err) {
+                alert("⚠️ ملف غير صالح!");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // =========================================================================
+    // طباعة الكشف الرسمي (PDF / A4)
+    // =========================================================================
+    function printOfficialReport() {
+        const memberName = document.getElementById('memberInput').value || '................................';
+        const todayStr = new Date().toLocaleDateString('ar-EG');
+        let rowsHtml = '';
+
+        cases.forEach((c, idx) => {
+            rowsHtml += `<tr>
+                <td>${idx + 1}</td>
+                <td style="font-weight:bold;">${c.caseNum}</td>
+                <td>${c.refDate}</td>
+                <td>${c.sourceType || 'شكوى'} - ${c.complainant}</td>
+                <td>${c.subject}</td>
+                <td>${c.lastAction}</td>
+                <td style="font-weight:bold;">${c.status}</td>
+            </tr>`;
+        });
+
+        const printArea = document.getElementById('printReportArea');
+        printArea.innerHTML = `
+            <div class="print-header">
+                <h2 style="margin:0;">هيئة النيابة الإدارية — نيابة ملوي الإدارية</h2>
+                <h3 style="margin:6px 0;">بيان إحصائي وحصر القضايا المتداولة والمتصرف فيها</h3>
+                <p style="margin:4px 0; font-weight:bold;">اسم العضو: ${memberName} &nbsp;&nbsp;|&nbsp;&nbsp; تاريخ البيان: ${todayStr}</p>
+                <p style="margin:4px 0; font-size:13px;">
+                    الإجمالي: (${document.getElementById('stat-total').innerText}) |
+                    قيد التحقيق: (${document.getElementById('stat-inv').innerText}) |
+                    استيفاء: (${document.getElementById('stat-istifaa').innerText}) |
+                    اختصاص: (${document.getElementById('stat-ekhtesas').innerText}) |
+                    مكتب فني: (${document.getElementById('stat-tech').innerText}) |
+                    حفظ: (${document.getElementById('stat-saved').innerText}) |
+                    دعوى: (${document.getElementById('stat-lawsuit').innerText}) |
+                    نسبة الإنجاز: (${document.getElementById('stat-rate').innerText})
+                </p>
+            </div>
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th>م</th>
+                        <th>رقم القضية</th>
+                        <th>تاريخ الورود</th>
+                        <th>الشاكي / الجهة</th>
+                        <th>موضوع القضية</th>
+                        <th>آخر إجراء</th>
+                        <th>التصرف</th>
+                    </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+            </table>
+            <div style="margin-top:30px; display:flex; justify-content:space-between; font-weight:bold; font-size:14px;">
+                <div>توقيع عضو النيابة<br><br>............................</div>
+                <div>يعتمد،، مدير النيابة<br><br>............................</div>
+            </div>
+        `;
+        window.print();
+    }
+
+    function exportCSV() {
+        let csv = "\uFEFFرقم القضية,تاريخ الإحالة,مصدر القضية,الشاكي / الجهة المبلغة,الموضوع,آخر إجراء,تاريخ الجلسة,التصرف النهائي,ملاحظات\n";
+        cases.forEach(c => {
+            csv += `"${c.caseNum}","${c.refDate}","${c.sourceType || 'شكوى'}","${c.complainant}","${c.subject}","${c.lastAction}","${c.sessionDate || 'لا يوجد'}","${c.status}","${c.notes}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "سجل_القضايا.csv";
+        link.click();
+    }
+</script>
+</body>
+</html>
