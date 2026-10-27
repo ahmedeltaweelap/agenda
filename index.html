@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أجندة القضايا السحابية - النيااابه الإدارية</title>
+    <title>أجندة القضايا السحابية - النيابة الإدارية</title>
     <style>
         :root {
             --primary: #1e293b;
@@ -24,6 +24,17 @@
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Cairo", sans-serif; }
         body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0 0 90px 0; }
 
+        /* أيقونة الميزان التفاعلية للضغطات الخمس على الهاتف والكمبيوتر */
+        .secret-trigger {
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            display: inline-block;
+            transition: transform 0.1s ease;
+        }
+        .secret-trigger:active { transform: scale(0.9); }
+
         /* شاشة تسجيل الدخول السحابية */
         #authScreen {
             min-height: 100vh; display: flex; flex-direction: column;
@@ -31,7 +42,7 @@
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         }
         .auth-card {
-            background: white; width: 100%; max-width: 400px; border-radius: 24px;
+            background: white; width: 100%; max-width: 410px; border-radius: 24px;
             padding: 28px 22px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center;
         }
         .auth-card h2 { margin: 0 0 6px; color: var(--primary); font-size: 1.4rem; }
@@ -41,14 +52,14 @@
         .auth-tab.active { background: var(--primary); color: white; }
         .auth-input {
             width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #cbd5e1;
-            margin-bottom: 12px; font-size: 0.92rem; outline: none; background: #f8fafc;
+            margin-bottom: 12px; font-size: 0.9rem; outline: none; background: #f8fafc;
         }
         .auth-btn {
             width: 100%; padding: 13px; border-radius: 12px; border: none;
             background: var(--primary); color: white; font-size: 1rem; font-weight: 700;
             cursor: pointer; margin-top: 6px;
         }
-        .auth-error { color: #ef4444; font-size: 0.8rem; margin-bottom: 10px; display: none; font-weight: 600; }
+        .auth-error { color: #ef4444; font-size: 0.8rem; margin-bottom: 10px; display: none; font-weight: 600; background: #fef2f2; padding: 8px; border-radius: 8px; border: 1px solid #fecaca; }
 
         /* واجهة البرنامج الرئيسية */
         #appScreen { display: none; }
@@ -69,34 +80,31 @@
         .header-top {
             display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
         }
-        .header-title { font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-        
-        /* زر إدارة الموقع الخفي الأنيق */
-        .btn-admin-stealth {
-            background: rgba(255,255,255,0.07); color: #94a3b8;
-            border: 1px dashed rgba(255,255,255,0.18); padding: 4px 8px;
-            border-radius: 8px; font-size: 0.68rem; font-weight: 700;
-            cursor: pointer; transition: 0.25s;
-        }
-        .btn-admin-stealth:hover { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border-color: #fbbf24; }
+        .header-title { font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
 
-        .top-actions { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+        .top-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
         .btn-top {
             background: rgba(255,255,255,0.15); color: white; border: none;
-            padding: 6px 10px; border-radius: 8px; font-size: 0.73rem; font-weight: 700; cursor: pointer;
+            padding: 7px 11px; border-radius: 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer;
         }
         .btn-print { background: #0d9488; }
         .btn-logout { background: #ef4444; }
 
+        .member-info-row {
+            display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; margin-top: 12px;
+        }
+        @media (max-width: 480px) {
+            .member-info-row { grid-template-columns: 1fr; }
+        }
         .member-box {
-            margin-top: 12px; width: 100%; padding: 9px 12px; border-radius: 10px;
+            width: 100%; padding: 9px 12px; border-radius: 10px;
             border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1);
-            color: #fbbf24; font-size: 0.9rem; font-weight: 700; outline: none;
+            color: #fbbf24; font-size: 0.88rem; font-weight: 700; outline: none;
         }
         .member-box::placeholder { color: #cbd5e1; font-weight: 400; }
 
         .cloud-status {
-            font-size: 0.72rem; color: #34d399; margin-top: 6px; display: flex; align-items: center; justify-content: space-between;
+            font-size: 0.72rem; color: #34d399; margin-top: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;
         }
 
         /* لوحة الإحصائيات - 8 خانات */
@@ -240,15 +248,15 @@
             background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px;
             padding: 14px; margin-bottom: 14px;
         }
-        .admin-section h4 { margin: 0 0 10px; color: var(--primary); font-size: 0.95rem; display: flex; align-items: center; gap: 6px; }
-        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 8px; background: white; }
+        .admin-section h4 { margin: 0 0 10px; color: var(--primary); font-size: 0.92rem; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; margin-top: 8px; background: white; }
         .admin-table th, .admin-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: center; }
         .admin-table th { background: #1e293b; color: white; }
         .chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-        .chip { background: #e2e8f0; padding: 4px 10px; border-radius: 15px; font-size: 0.76rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .chip { background: #e2e8f0; padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
         .chip span { color: #dc2626; cursor: pointer; font-weight: 900; }
 
-        /* قسم الطباعة الرسمي (PDF / A4) */
+        /* قسم استخراج البيانات PDF (بدون توقيعات) */
         #printReportArea { display: none; }
         @media print {
             body * { visibility: hidden; }
@@ -267,10 +275,27 @@
 </head>
 <body>
 
+<!-- قوائم النيابات المقترحة لتسهيل التسجيل والفرز -->
+<datalist id="NiyabaNamesList">
+    <option value="نيابة ملوي الإدارية">
+    <option value="نيابة المنيا الإدارية">
+    <option value="نيابة أسيوط الإدارية">
+    <option value="نيابة ديروط الإدارية">
+    <option value="نيابة أبنوب الإدارية">
+    <option value="نيابة مغاغة الإدارية">
+    <option value="نيابة بني مزار الإدارية">
+    <option value="نيابة سمالوط الإدارية">
+    <option value="نيابة أبو قرقاص الإدارية">
+    <option value="نيابة القوصية الإدارية">
+    <option value="نيابة منفلوط الإدارية">
+    <option value="نيابة أبو تيج الإدارية">
+</datalist>
+
 <!-- 1. شاشة تسجيل الدخول السحابية -->
 <div id="authScreen">
     <div class="auth-card">
-        <div style="font-size: 2.5rem; margin-bottom: 8px;">⚖️</div>
+        <!-- 5 ضغطات متتالية على الميزان تفتح بوابة الإدارة السرية -->
+        <div class="secret-trigger" onclick="handleSecretTap()" style="font-size: 2.6rem; margin-bottom: 8px;">⚖️</div>
         <h2>أجندة القضايا السحابية</h2>
         <p>النيابة الإدارية — حفظ آمن ومزامنة فورية للقضايا</p>
 
@@ -283,6 +308,7 @@
 
         <input type="text" id="authUsername" class="auth-input" placeholder="👤 اسم المستخدم أو رقم الهاتف (بدون مسافات)">
         <input type="text" id="authFullName" class="auth-input" placeholder="⚖️ الاسم الكامل للعضو (يظهر في الأجندة)" style="display:none;">
+        <input type="text" id="authNiyabaName" class="auth-input" list="NiyabaNamesList" placeholder="🏛️ اسم النيابة (مثال: نيابة ملوي الإدارية)" style="display:none;">
         <input type="password" id="authPassword" class="auth-input" placeholder="🔒 كلمة المرور (6 أحرف أو أرقام على الأقل)">
 
         <button class="auth-btn" id="authSubmitBtn" onclick="handleAuth()">دخول إلى الأجندة</button>
@@ -301,16 +327,22 @@
     <header>
         <div class="header-top">
             <div class="header-title">
-                <span>⚖️ أجندة القضايا</span>
-                <button class="btn-admin-stealth" onclick="openAdminPanel()" title="لوحة تحكم المشرف">⚙️ إدارة الموقع</button>
+                <!-- 5 ضغطات متتالية على الميزان هنا أيضاً تفتح بوابة الإدارة السرية -->
+                <span class="secret-trigger" onclick="handleSecretTap()">⚖️</span>
+                <span>أجندة القضايا السحابية</span>
             </div>
             <div class="top-actions">
-                <button class="btn-top btn-print" onclick="printOfficialReport()">🖨️ كشف رسمي PDF</button>
+                <button class="btn-top btn-print" onclick="printOfficialReport()">📄 استخراج البيانات PDF</button>
                 <button class="btn-top" onclick="exportCSV()">📥 Excel</button>
                 <button class="btn-top btn-logout" onclick="logoutUser()">خروج</button>
             </div>
         </div>
-        <input type="text" id="memberInput" class="member-box" placeholder="👤 اسم المستشار / العضو المحال إليه..." onchange="updateMemberNameCloud()">
+
+        <div class="member-info-row">
+            <input type="text" id="memberInput" class="member-box" placeholder="👤 اسم المستشار / العضو..." onchange="updateMemberInfoCloud()">
+            <input type="text" id="memberNiyabaInput" class="member-box" list="NiyabaNamesList" placeholder="🏛️ النيابة (مثال: نيابة ملوي الإدارية)..." onchange="updateMemberInfoCloud()">
+        </div>
+
         <div class="cloud-status">
             <span id="cloudIndicator">☁️ متصل بالسحابة — يتم حفظ القضايا تلقائياً</span>
             <span id="overdueCounter" style="color:#fca5a5; font-weight:700;"></span>
@@ -431,45 +463,89 @@
     </div>
 </div>
 
-<!-- 4. لوحة تحكم المشرف (Admin Panel Modal) -->
+<!-- 4. بوابة تسجيل دخول المشرف السرية (تظهر بعد 5 ضغطات على الميزان) -->
+<div class="modal" id="adminLoginModal">
+    <div class="modal-content" style="max-width: 390px; text-align: center;">
+        <div style="font-size: 2.2rem; margin-bottom: 6px;">🔐</div>
+        <h3 style="margin:0 0 6px; color:var(--primary);">بوابة إدارة النظام السرية</h3>
+        <p style="font-size:0.78rem; color:var(--muted); margin:0 0 14px;">مخصصة لمؤسس الموقع فقط</p>
+
+        <div id="adminLoginError" class="auth-error"></div>
+
+        <input type="text" id="adminUserField" class="auth-input" placeholder="👤 اسم مستخدم الإدارة">
+        <input type="password" id="adminPassField" class="auth-input" placeholder="🔑 كلمة مرور الإدارة">
+
+        <button class="btn-save" onclick="verifyAdminLogin()">فتح لوحة الإدارة ⚙️</button>
+        <button onclick="showAdminRecoveryHint()" style="background:none; border:none; color:#b45309; font-size:0.76rem; font-weight:700; margin-top:10px; cursor:pointer; text-decoration:underline;">نسيت اسم المستخدم أو كلمة السر؟</button>
+        <button onclick="document.getElementById('adminLoginModal').classList.remove('open')" style="width:100%; background:none; border:none; padding:8px; color:#64748b; margin-top:4px; cursor:pointer;">إلغاء</button>
+    </div>
+</div>
+
+<!-- 5. لوحة تحكم المشرف الشاملة (Admin Panel Modal) -->
 <div class="modal" id="adminModal">
-    <div class="modal-content" style="max-width: 650px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <h3 style="margin:0; color:var(--primary);">⚙️ لوحة إدارة الموقع والتطويرات</h3>
+    <div class="modal-content" style="max-width: 680px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <h3 style="margin:0; color:var(--primary);">⚙️ لوحة التحكم المركزية للموقع</h3>
             <button onclick="closeAdminModal()" style="border:none; background:#fee2e2; color:#b91c1c; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer;">إغلاق ✖</button>
         </div>
 
-        <!-- 1. التعميمات والتنبيهات الفورية -->
+        <!-- 1. إحصائيات النيابات والأعضاء مع الفلترة حسب النيابة -->
         <div class="admin-section">
-            <h4>📢 شريط التنبيهات العام لجميع الأعضاء</h4>
-            <input type="text" id="adminAnnouncementInput" placeholder="اكتب تنبيهاً أو تذكيراً يظهر أعلى الموقع لكل الزملاء..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:8px;">
-            <div style="display:flex; gap:8px;">
-                <button onclick="saveGlobalSettings()" style="background:var(--primary); color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem;">نشر التنبيه فوراً</button>
-                <button onclick="clearAnnouncement()" style="background:#e2e8f0; color:#334155; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem;">إخفاء الشريط</button>
+            <h4>
+                <span>📊 إحصائيات الأعضاء والنيابات المسجلة</span>
+                <button onclick="loadAllMembersStats()" style="background:#0d9488; color:white; border:none; padding:5px 10px; border-radius:7px; font-weight:700; cursor:pointer; font-size:0.75rem;">🔄 تحديث البيانات</button>
+            </h4>
+            <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+                <label style="font-size:0.78rem; font-weight:700; white-space:nowrap;">🏛️ فرز حسب النيابة:</label>
+                <select id="adminNiyabaFilter" onchange="renderAdminMembersTable()" style="flex:1; padding:7px; border-radius:8px; border:1px solid #cbd5e1; font-weight:700; font-size:0.8rem;">
+                    <option value="الكل">عرض جميع النيابات</option>
+                </select>
+            </div>
+            <div id="allMembersStatsContainer" style="overflow-x:auto;"></div>
+        </div>
+
+        <!-- 2. شريط التنبيهات الموجه (للكل أو لنيابة محددة) + قفل التسجيل -->
+        <div class="admin-section">
+            <h4>📢 نشر تنبيه إداري & التحكم في قبول أعضاء جدد</h4>
+            <div class="form-row-2" style="margin-bottom:8px;">
+                <input type="text" id="adminAnnouncementInput" placeholder="اكتب نص التنبيه أو التعميم..." style="padding:8px; border-radius:8px; border:1px solid #cbd5e1;">
+                <input type="text" id="adminAnnouncementTarget" list="NiyabaNamesList" placeholder="توجيه إلى: (اتركه فارغاً للكل أو اكتب اسم نيابة)" style="padding:8px; border-radius:8px; border:1px solid #cbd5e1;">
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; gap:6px;">
+                    <button onclick="saveGlobalSettings()" style="background:var(--primary); color:white; border:none; padding:7px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.78rem;">نشر التنبيه</button>
+                    <button onclick="clearAnnouncement()" style="background:#e2e8f0; color:#334155; border:none; padding:7px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.78rem;">إخفاء التنبيه</button>
+                </div>
+                <label style="font-size:0.78rem; font-weight:700; display:flex; align-items:center; gap:5px; color:#b91c1c; cursor:pointer;">
+                    <input type="checkbox" id="lockRegistrationToggle" onchange="saveGlobalSettings()" style="width:16px; height:16px;">
+                    🔒 إغلاق التسجيل لأعضاء جدد
+                </label>
             </div>
         </div>
 
-        <!-- 2. إدارة الجهات المبلغة المتكررة -->
+        <!-- 3. إدارة الجهات المبلغة المتكررة -->
         <div class="admin-section">
-            <h4>🏢 الجهات المبلغة السريعة (تظهر تلقائياً عند اختيار بلاغ)</h4>
+            <h4>🏢 الجهات المبلغة السريعة (تظهر للأعضاء عند اختيار بلاغ)</h4>
             <div style="display:flex; gap:6px;">
-                <input type="text" id="newEntityInput" placeholder="أضف جهة جديدة (مثال: مستشفى ملوي العام)..." style="flex:1; padding:8px; border-radius:8px; border:1px solid #cbd5e1;">
+                <input type="text" id="newEntityInput" placeholder="أضف جهة جديدة (مثال: مديرية الطرق)..." style="flex:1; padding:8px; border-radius:8px; border:1px solid #cbd5e1;">
                 <button onclick="addQuickEntity()" style="background:#0284c7; color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer;">+ إضافة</button>
             </div>
             <div class="chip-list" id="entitiesChipList"></div>
         </div>
 
-        <!-- 3. إحصائية النيابة المجمعة لجميع الأعضاء -->
+        <!-- 4. تغيير اسم المستخدم وكلمة المرور الخاصة بالإدارة -->
         <div class="admin-section">
-            <h4>📊 إحصائية المكتب المجمعة (أعضاء النيابة المسجلين)</h4>
-            <button onclick="loadAllMembersStats()" style="background:#0d9488; color:white; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; width:100%;">🔄 جلب وتحديث إحصائيات جميع الأعضاء من السحابة</button>
-            <div id="allMembersStatsContainer" style="overflow-x:auto; margin-top:8px;"></div>
+            <h4>🔐 بيانات دخول المشرف (أنت فقط من يعرفها ويغيرها)</h4>
+            <div class="form-row-2">
+                <input type="text" id="newAdminUser" placeholder="اسم مستخدم الإدارة الجديد">
+                <input type="text" id="newAdminPass" placeholder="كلمة سر الإدارة الجديدة">
+            </div>
+            <button onclick="updateAdminCredentials()" style="margin-top:8px; width:100%; background:#0f172a; color:#fbbf24; border:none; padding:9px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem;">💾 حفظ وتحديث بيانات دخول الإدارة في السحابة</button>
         </div>
 
-        <!-- 4. النسخ الاحتياطي الشامل لحماية قاعدة البيانات -->
+        <!-- 5. النسخ الاحتياطي الشامل لحماية قاعدة البيانات -->
         <div class="admin-section">
             <h4>💾 حماية قاعدة البيانات (Master Backup & Restore)</h4>
-            <p style="font-size:0.75rem; color:#64748b; margin:0 0 10px;">يمكنك تحميل نسخة احتياطية كاملة بامتداد (JSON) صالحة للنقل لأي خادم رسمي أو استضافة مدفوعة في المستقبل.</p>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button onclick="downloadMasterBackup()" style="background:#b45309; color:white; border:none; padding:9px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; flex:1;">📥 تحميل قاعدة البيانات كاملة (JSON)</button>
                 <button onclick="document.getElementById('restoreFileInput').click()" style="background:#475569; color:white; border:none; padding:9px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; flex:1;">📤 استرجاع قضايا من ملف</button>
@@ -479,7 +555,7 @@
     </div>
 </div>
 
-<!-- 5. قالب الكشف الرسمي للطباعة A4 -->
+<!-- 6. قالب استخراج البيانات PDF (بدون توقيعات) -->
 <div id="printReportArea"></div>
 
 <!-- مكتبات جوجل فايربيز السحابية -->
@@ -511,6 +587,13 @@
     let authMode = 'login';
     let currentFilter = 'الكل';
     let cases = [];
+    let allLoadedUsers = [];
+
+    // إعدادات الإدارة الافتراضية (يتم تحديثها من السحابة تلقائياً)
+    let adminAuthConfig = { user: "admin", pass: "123456" };
+    let registrationLocked = false;
+    let globalAnnouncement = "";
+    let globalAnnouncementTarget = "";
     let quickEntities = [
         "الإدارة التعليمية بملوي",
         "الوحدة المحلية لمركز ومدينة ملوي",
@@ -519,8 +602,67 @@
         "إدارة التضامن الاجتماعي",
         "الإدارة الزراعية بملوي"
     ];
-    let globalAnnouncement = "";
 
+    // =========================================================================
+    // نظام الـ 5 ضغطات المتتالية السري (يعمل على الهاتف والكمبيوتر)
+    // =========================================================================
+    let secretTapCount = 0;
+    let secretTapTimer = null;
+
+    function handleSecretTap() {
+        secretTapCount++;
+        clearTimeout(secretTapTimer);
+        if (secretTapCount >= 5) {
+            secretTapCount = 0;
+            openAdminLoginGate();
+        } else {
+            secretTapTimer = setTimeout(() => { secretTapCount = 0; }, 1800);
+        }
+    }
+
+    async function openAdminLoginGate() {
+        await fetchGlobalSettings();
+        document.getElementById('adminLoginError').style.display = 'none';
+        document.getElementById('adminUserField').value = '';
+        document.getElementById('adminPassField').value = '';
+        document.getElementById('adminLoginModal').classList.add('open');
+    }
+
+    function verifyAdminLogin() {
+        const u = document.getElementById('adminUserField').value.trim();
+        const p = document.getElementById('adminPassField').value.trim();
+        const err = document.getElementById('adminLoginError');
+
+        if (u === adminAuthConfig.user && p === adminAuthConfig.pass) {
+            document.getElementById('adminLoginModal').classList.remove('open');
+            document.getElementById('adminAnnouncementInput').value = globalAnnouncement;
+            document.getElementById('adminAnnouncementTarget').value = globalAnnouncementTarget;
+            document.getElementById('lockRegistrationToggle').checked = registrationLocked;
+            document.getElementById('newAdminUser').value = adminAuthConfig.user;
+            document.getElementById('newAdminPass').value = adminAuthConfig.pass;
+            applyGlobalSettingsUI();
+            document.getElementById('adminModal').classList.add('open');
+            loadAllMembersStats();
+        } else {
+            err.innerText = '❌ اسم المستخدم أو كلمة مرور الإدارة غير صحيحة!';
+            err.style.display = 'block';
+        }
+    }
+
+    function showAdminRecoveryHint() {
+        alert(
+            "🔑 كيفية معرفة أو استعادة بيانات الإدارة في أي وقت:\n\n" +
+            "بما أنك المالك الوحيد لحساب جوجل (Firebase):\n" +
+            "1. افتح موقع Firebase Console ثم مشروع (agenda-mallawy).\n" +
+            "2. ادخل على قسم Firestore Database.\n" +
+            "3. افتح مجموعة (settings) ثم وثيقة (global).\n" +
+            "4. ستجد أمامك حقلي (adminUser) و (adminPass) مكتوبين بوضوح، ويمكنك قراءتهما أو تعديلهما يدوياً في ثوانٍ!"
+        );
+    }
+
+    // =========================================================================
+    // تسجيل دخول وإنشاء حسابات الأعضاء (مع اسم النيابة)
+    // =========================================================================
     function switchAuthMode(mode) {
         authMode = mode;
         document.getElementById('authError').style.display = 'none';
@@ -528,11 +670,13 @@
             document.getElementById('tabRegister').classList.add('active');
             document.getElementById('tabLogin').classList.remove('active');
             document.getElementById('authFullName').style.display = 'block';
+            document.getElementById('authNiyabaName').style.display = 'block';
             document.getElementById('authSubmitBtn').innerText = 'إنشاء حساب جديد والدخول';
         } else {
             document.getElementById('tabLogin').classList.add('active');
             document.getElementById('tabRegister').classList.remove('active');
             document.getElementById('authFullName').style.display = 'none';
+            document.getElementById('authNiyabaName').style.display = 'none';
             document.getElementById('authSubmitBtn').innerText = 'دخول إلى الأجندة';
         }
     }
@@ -546,6 +690,7 @@
         const username = document.getElementById('authUsername').value.trim();
         const password = document.getElementById('authPassword').value.trim();
         const fullName = document.getElementById('authFullName').value.trim();
+        const niyabaName = document.getElementById('authNiyabaName').value.trim();
         const errBox = document.getElementById('authError');
         errBox.style.display = 'none';
 
@@ -555,13 +700,30 @@
             return;
         }
 
+        if (authMode === 'register') {
+            await fetchGlobalSettings();
+            if (registrationLocked) {
+                errBox.innerText = '🔒 التسجيل لحسابات جديدة مغلق حالياً من قِبل إدارة الموقع.';
+                errBox.style.display = 'block';
+                return;
+            }
+            if (!niyabaName) {
+                errBox.innerText = '🏛️ يرجى كتابة أو اختيار اسم النيابة التابع لها العضو.';
+                errBox.style.display = 'block';
+                return;
+            }
+        }
+
         const email = formatUsernameToEmail(username);
         try {
             if (authMode === 'register') {
                 const cred = await auth.createUserWithEmailAndPassword(email, password);
                 await db.collection('users').doc(cred.user.uid).set({
+                    username: username,
                     memberName: fullName || username,
-                    cases: []
+                    niyabaName: niyabaName || 'نيابة ملوي الإدارية',
+                    cases: [],
+                    updatedAt: new Date().toISOString()
                 });
             } else {
                 await auth.signInWithEmailAndPassword(email, password);
@@ -573,6 +735,7 @@
     }
 
     if (cloudEnabled) {
+        fetchGlobalSettings();
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
@@ -584,6 +747,7 @@
                     const data = doc.data();
                     cases = Array.isArray(data.cases) ? data.cases : [];
                     document.getElementById('memberInput').value = data.memberName || '';
+                    document.getElementById('memberNiyabaInput').value = data.niyabaName || '';
                 } else {
                     cases = [];
                 }
@@ -599,7 +763,6 @@
         });
     }
 
-    // جلب إعدادات لوحة التحكم العامة (التنبيهات والجهات)
     async function fetchGlobalSettings() {
         if (!cloudEnabled) return;
         try {
@@ -610,6 +773,10 @@
                     quickEntities = sData.quickEntities;
                 }
                 globalAnnouncement = sData.announcement || "";
+                globalAnnouncementTarget = sData.announcementTarget || "";
+                registrationLocked = !!sData.registrationLocked;
+                if (sData.adminUser) adminAuthConfig.user = sData.adminUser;
+                if (sData.adminPass) adminAuthConfig.pass = sData.adminPass;
             }
         } catch(e) {}
         applyGlobalSettingsUI();
@@ -617,8 +784,15 @@
 
     function applyGlobalSettingsUI() {
         const banner = document.getElementById('announcementBanner');
-        if (globalAnnouncement && globalAnnouncement.trim() !== "") {
-            banner.innerText = "📢 تنبيه إداري: " + globalAnnouncement;
+        const currentMemberNiyaba = (document.getElementById('memberNiyabaInput')?.value || '').trim();
+
+        const targetMatches = !globalAnnouncementTarget ||
+                              globalAnnouncementTarget.trim() === '' ||
+                              currentMemberNiyaba.includes(globalAnnouncementTarget.trim());
+
+        if (globalAnnouncement && globalAnnouncement.trim() !== "" && targetMatches) {
+            const prefix = globalAnnouncementTarget ? `📢 تنبيه (${globalAnnouncementTarget}): ` : `📢 تنبيه إداري: `;
+            banner.innerText = prefix + globalAnnouncement;
             banner.style.display = 'block';
         } else {
             banner.style.display = 'none';
@@ -643,15 +817,17 @@
         if (cloudEnabled && currentUser) {
             document.getElementById('cloudIndicator').innerText = '⏳ جاري الحفظ على السحابة...';
             await db.collection('users').doc(currentUser.uid).set({
-                memberName: document.getElementById('memberInput').value,
+                memberName: document.getElementById('memberInput').value.trim(),
+                niyabaName: document.getElementById('memberNiyabaInput').value.trim(),
                 cases: cases,
                 updatedAt: new Date().toISOString()
             }, { merge: true });
             document.getElementById('cloudIndicator').innerText = '☁️ تم الحفظ في السحابة بنجاح';
+            applyGlobalSettingsUI();
         }
     }
 
-    function updateMemberNameCloud() { syncToCloud(); }
+    function updateMemberInfoCloud() { syncToCloud(); }
     function logoutUser() { if (cloudEnabled) auth.signOut(); else location.reload(); }
 
     function selectSourceType(type) {
@@ -674,7 +850,6 @@
         }
     }
 
-    // فحص ما إذا كانت القضية متأخرة (+90 يوماً وهي قيد التحقيق أو استيفاء)
     function isCaseOverdue(c) {
         if (c.status !== 'قيد التحقيق' && c.status !== 'استيفاء') return false;
         if (!c.refDate || c.refDate === 'لا يوجد') return false;
@@ -682,17 +857,6 @@
         if (isNaN(ref.getTime())) return false;
         const diffDays = (new Date() - ref) / (1000 * 60 * 60 * 24);
         return diffDays >= 90;
-    }
-
-    // فحص الجلسات القريبة (اليوم أو غداً أو خلال 3 أيام)
-    function isUpcomingSession(c) {
-        if (!c.sessionDate || c.sessionDate === 'لا يوجد') return false;
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const sDate = new Date(c.sessionDate);
-        sDate.setHours(0,0,0,0);
-        const diffDays = (sDate - today) / (1000 * 60 * 60 * 24);
-        return diffDays >= 0 && diffDays <= 2;
     }
 
     function renderCases() {
@@ -733,7 +897,6 @@
 
         cases.forEach((c, idx) => {
             const overdue = isCaseOverdue(c);
-            const hasSession = isUpcomingSession(c);
 
             if (currentFilter === 'متأخرة' && !overdue) return;
             else if (currentFilter === 'جلسات قريبة' && (!c.sessionDate || c.sessionDate === 'لا يوجد')) return;
@@ -841,37 +1004,48 @@
     }
 
     // =========================================================================
-    // وظائف لوحة تحكم المشرف (Admin Panel)
+    // وظائف لوحة تحكم المشرف المركزية
     // =========================================================================
-    function openAdminPanel() {
-        const pass = prompt("🔒 أدخل الرقم السري لإدارة الموقع (الافتراضي: 123456):");
-        if (pass !== "123456") {
-            if (pass !== null) alert("الرقم السري غير صحيح!");
-            return;
-        }
-        document.getElementById('adminAnnouncementInput').value = globalAnnouncement;
-        applyGlobalSettingsUI();
-        document.getElementById('adminModal').classList.add('open');
-    }
-
     function closeAdminModal() {
         document.getElementById('adminModal').classList.remove('open');
     }
 
+    async function updateAdminCredentials() {
+        const newU = document.getElementById('newAdminUser').value.trim();
+        const newP = document.getElementById('newAdminPass').value.trim();
+        if (!newU || newP.length < 4) {
+            return alert("⚠️ يرجى كتابة اسم مستخدم وكلمة سر لا تقل عن 4 أحرف/أرقام.");
+        }
+        adminAuthConfig.user = newU;
+        adminAuthConfig.pass = newP;
+        if (cloudEnabled) {
+            await db.collection('settings').doc('global').set({
+                adminUser: newU,
+                adminPass: newP
+            }, { merge: true });
+            alert("✅ تم تحديث اسم المستخدم وكلمة المرور الخاصة بالإدارة في السحابة بنجاح!");
+        }
+    }
+
     async function saveGlobalSettings() {
         globalAnnouncement = document.getElementById('adminAnnouncementInput').value.trim();
+        globalAnnouncementTarget = document.getElementById('adminAnnouncementTarget').value.trim();
+        registrationLocked = document.getElementById('lockRegistrationToggle').checked;
         applyGlobalSettingsUI();
         if (cloudEnabled) {
             await db.collection('settings').doc('global').set({
                 announcement: globalAnnouncement,
+                announcementTarget: globalAnnouncementTarget,
+                registrationLocked: registrationLocked,
                 quickEntities: quickEntities
             }, { merge: true });
-            alert("✅ تم حفظ ونشر التعديلات لجميع الأعضاء بنجاح!");
+            alert("✅ تم حفظ الإعدادات وتطبيقها فوراً!");
         }
     }
 
     async function clearAnnouncement() {
         document.getElementById('adminAnnouncementInput').value = '';
+        document.getElementById('adminAnnouncementTarget').value = '';
         await saveGlobalSettings();
     }
 
@@ -898,55 +1072,85 @@
 
     async function loadAllMembersStats() {
         const container = document.getElementById('allMembersStatsContainer');
-        container.innerHTML = '⏳ جاري تجميع بيانات الأعضاء من السحابة...';
+        container.innerHTML = '⏳ جاري تجميع بيانات الأعضاء والنيابات من السحابة...';
         try {
             const snap = await db.collection('users').get();
-            let html = `<table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>اسم العضو</th>
-                        <th>الإجمالي</th>
-                        <th>تحقيق/استيفاء</th>
-                        <th>منجز (حفظ/دعوى/فني/اختصاص)</th>
-                        <th>نسبة الإنجاز</th>
-                    </tr>
-                </thead><tbody>`;
+            allLoadedUsers = [];
+            const niyabaSet = new Set();
 
-            let grandTotal = 0, grandDone = 0;
             snap.forEach(doc => {
                 const d = doc.data();
-                const cList = Array.isArray(d.cases) ? d.cases : [];
-                const total = cList.length;
-                const done = cList.filter(c => ['اختصاص','مكتب فني','حفظ','دعوى تأديبية'].includes(c.status)).length;
-                const pending = total - done;
-                const rate = total > 0 ? Math.round((done / total) * 100) : 0;
-                grandTotal += total;
-                grandDone += done;
-
-                html += `<tr>
-                    <td style="font-weight:700;">${d.memberName || 'عضو مسجل'}</td>
-                    <td>${total}</td>
-                    <td>${pending}</td>
-                    <td>${done}</td>
-                    <td style="font-weight:700; color:#0d9488;">${rate}%</td>
-                </tr>`;
+                const niyaba = (d.niyabaName || 'غير محدد').trim();
+                niyabaSet.add(niyaba);
+                allLoadedUsers.push({ id: doc.id, ...d, niyabaName: niyaba });
             });
 
-            const grandRate = grandTotal > 0 ? Math.round((grandDone / grandTotal) * 100) : 0;
-            html += `<tr style="background:#fef3c7; font-weight:800;">
-                <td>إجمالي النيابة</td>
-                <td>${grandTotal}</td>
-                <td>${grandTotal - grandDone}</td>
-                <td>${grandDone}</td>
-                <td>${grandRate}%</td>
-            </tr></tbody></table>`;
-            container.innerHTML = html;
+            // تحديث قائمة فلتر النيابات في لوحة الإدارة
+            const filterSelect = document.getElementById('adminNiyabaFilter');
+            const currentVal = filterSelect.value;
+            filterSelect.innerHTML = `<option value="الكل">عرض جميع النيابات (${allLoadedUsers.length} عضو)</option>`;
+            Array.from(niyabaSet).sort().forEach(n => {
+                filterSelect.innerHTML += `<option value="${n}">${n}</option>`;
+            });
+            if (Array.from(niyabaSet).includes(currentVal)) filterSelect.value = currentVal;
+
+            renderAdminMembersTable();
         } catch(e) {
             container.innerHTML = '⚠️ تعذر جلب الإحصائيات المجمعة.';
         }
     }
 
-    // تحميل نسخة احتياطية شاملة (Master JSON Backup)
+    function renderAdminMembersTable() {
+        const container = document.getElementById('allMembersStatsContainer');
+        const selectedNiyaba = document.getElementById('adminNiyabaFilter').value;
+
+        const filteredUsers = selectedNiyaba === 'الكل'
+            ? allLoadedUsers
+            : allLoadedUsers.filter(u => u.niyabaName === selectedNiyaba);
+
+        let html = `<table class="admin-table">
+            <thead>
+                <tr>
+                    <th>اسم العضو</th>
+                    <th>النيابة</th>
+                    <th>الإجمالي</th>
+                    <th>تحقيق/استيفاء</th>
+                    <th>منجز</th>
+                    <th>الإنجاز</th>
+                </tr>
+            </thead><tbody>`;
+
+        let grandTotal = 0, grandDone = 0;
+        filteredUsers.forEach(d => {
+            const cList = Array.isArray(d.cases) ? d.cases : [];
+            const total = cList.length;
+            const done = cList.filter(c => ['اختصاص','مكتب فني','حفظ','دعوى تأديبية'].includes(c.status)).length;
+            const pending = total - done;
+            const rate = total > 0 ? Math.round((done / total) * 100) : 0;
+            grandTotal += total;
+            grandDone += done;
+
+            html += `<tr>
+                <td style="font-weight:700;">${d.memberName || 'عضو مسجل'}</td>
+                <td style="color:#0369a1; font-weight:700;">${d.niyabaName}</td>
+                <td>${total}</td>
+                <td>${pending}</td>
+                <td>${done}</td>
+                <td style="font-weight:700; color:#0d9488;">${rate}%</td>
+            </tr>`;
+        });
+
+        const grandRate = grandTotal > 0 ? Math.round((grandDone / grandTotal) * 100) : 0;
+        html += `<tr style="background:#fef3c7; font-weight:800;">
+            <td colspan="2">الإجمالي (${selectedNiyaba === 'الكل' ? 'كل النيابات' : selectedNiyaba})</td>
+            <td>${grandTotal}</td>
+            <td>${grandTotal - grandDone}</td>
+            <td>${grandDone}</td>
+            <td>${grandRate}%</td>
+        </tr></tbody></table>`;
+        container.innerHTML = html;
+    }
+
     async function downloadMasterBackup() {
         try {
             let backupData = { exportedAt: new Date().toISOString(), currentMemberCases: cases, allUsers: [] };
@@ -990,10 +1194,11 @@
     }
 
     // =========================================================================
-    // طباعة الكشف الرسمي (PDF / A4)
+    // استخراج البيانات PDF (بدون توقيعات أو اعتماد مدير النيابة)
     // =========================================================================
     function printOfficialReport() {
-        const memberName = document.getElementById('memberInput').value || '................................';
+        const memberName = document.getElementById('memberInput').value || 'غير محدد';
+        const niyabaName = document.getElementById('memberNiyabaInput').value || 'النيابة الإدارية';
         const todayStr = new Date().toLocaleDateString('ar-EG');
         let rowsHtml = '';
 
@@ -1012,10 +1217,10 @@
         const printArea = document.getElementById('printReportArea');
         printArea.innerHTML = `
             <div class="print-header">
-                <h2 style="margin:0;">هيئة النيابة الإدارية — نيابة ملوي الإدارية</h2>
-                <h3 style="margin:6px 0;">بيان إحصائي وحصر القضايا المتداولة والمتصرف فيها</h3>
-                <p style="margin:4px 0; font-weight:bold;">اسم العضو: ${memberName} &nbsp;&nbsp;|&nbsp;&nbsp; تاريخ البيان: ${todayStr}</p>
-                <p style="margin:4px 0; font-size:13px;">
+                <h2 style="margin:0;">هيئة النيابة الإدارية — ${niyabaName}</h2>
+                <h3 style="margin:6px 0;">بيان استخراج بيانات وإحصائية القضايا</h3>
+                <p style="margin:4px 0; font-weight:bold;">العضو: ${memberName} &nbsp;&nbsp;|&nbsp;&nbsp; تاريخ الاستخراج: ${todayStr}</p>
+                <p style="margin:6px 0 0; font-size:13px;">
                     الإجمالي: (${document.getElementById('stat-total').innerText}) |
                     قيد التحقيق: (${document.getElementById('stat-inv').innerText}) |
                     استيفاء: (${document.getElementById('stat-istifaa').innerText}) |
@@ -1040,10 +1245,6 @@
                 </thead>
                 <tbody>${rowsHtml}</tbody>
             </table>
-            <div style="margin-top:30px; display:flex; justify-content:space-between; font-weight:bold; font-size:14px;">
-                <div>توقيع عضو النيابة<br><br>............................</div>
-                <div>يعتمد،، مدير النيابة<br><br>............................</div>
-            </div>
         `;
         window.print();
     }
